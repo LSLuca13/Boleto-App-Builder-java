@@ -2,9 +2,8 @@ package br.com.seubanco.boleto.model;
 
 public class Beneficiario {
     private String nome;
-    private String documento; // CPF ou CNPJ
+    private String documento; // CNPJ ou CPF
     private Endereco endereco;
-
     private String agencia;
     private String conta;
     private String carteira;

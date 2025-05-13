@@ -9,9 +9,6 @@ import br.com.seubanco.boleto.util.LinhaDigitavelUtil;
 public class BancoDoBrasilBuilder implements BoletoBuilder {
 
     private Boleto boleto;
-    private Beneficiario beneficiario;
-    private Sacado sacado;
-    private Titulo titulo;
 
     public BancoDoBrasilBuilder() {
         this.boleto = new Boleto();
@@ -19,45 +16,41 @@ public class BancoDoBrasilBuilder implements BoletoBuilder {
 
     @Override
     public void definirBeneficiario(Beneficiario beneficiario) {
-        this.beneficiario = beneficiario;
+        boleto.setBeneficiario(beneficiario);
     }
 
     @Override
     public void definirSacado(Sacado sacado) {
-        this.sacado = sacado;
+        boleto.setSacado(sacado);
     }
 
     @Override
     public void definirTitulo(Titulo titulo) {
-        this.titulo = titulo;
+        boleto.setTitulo(titulo);
     }
 
     @Override
     public void montarCampoLivre() {
-        // Exemplo fictício de montagem do campo livre p/ Banco do Brasil
-        String campoLivre = String.format("%4s", beneficiario.getAgencia()).replace(" ", "0") +
-                String.format("%8s", beneficiario.getConta()).replace(" ", "0") +
-                String.format("%3s", beneficiario.getCarteira()).replace(" ", "0") +
-                String.format("%10s", titulo.getNumeroDocumento()).replace(" ", "0");
+        Beneficiario b = boleto.getBeneficiario();
+        Titulo t = boleto.getTitulo();
+
+        String campoLivre = String.format("%4s", b.getAgencia()).replace(" ", "0") +
+                String.format("%8s", b.getConta()).replace(" ", "0") +
+                String.format("%3s", b.getCarteira()).replace(" ", "0") +
+                String.format("%10s", t.getNumeroDocumento()).replace(" ", "0");
 
         boleto.setCampoLivre(campoLivre);
     }
 
     @Override
     public void gerarCodigoDeBarras() {
-        String codigo = CodigoDeBarrasUtil.gerarCodigoDeBarras(
-                "001", // Banco do Brasil
-                "9",   // Moeda: Real
-                titulo,
-                boleto.getCampoLivre()
-        );
-        boleto.setCodigoDeBarras(codigo);
+        boleto.setCodigoDeBarras(CodigoDeBarrasUtil.gerarCodigoDeBarras(boleto));
     }
+
 
     @Override
     public void gerarLinhaDigitavel() {
-        String linha = LinhaDigitavelUtil.gerarLinhaDigitavel(boleto.getCodigoDeBarras());
-        boleto.setLinhaDigitavel(linha);
+        boleto.setLinhaDigitavel(LinhaDigitavelUtil.gerarLinhaDigitavel(boleto.getCodigoDeBarras()));
     }
 
     @Override
